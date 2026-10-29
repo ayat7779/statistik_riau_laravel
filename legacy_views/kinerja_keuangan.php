@@ -2,12 +2,24 @@
 // Pastikan koneksi database sudah di-include, misalnya dari index.php atau langsung di sini
 // include 'config/database.php'; // Uncomment this line if not already included
 
+// --- Get unique years for the dropdown ---
+$years_query = "SELECT DISTINCT tahun_lkpd AS tahun FROM lkpd_apbd_lampiran_1 ORDER BY tahun_lkpd DESC";
+$years_result = $conn->query($years_query);
+$available_years = [];
+if ($years_result && $years_result->num_rows > 0) {
+    while ($row = $years_result->fetch_assoc()) {
+        $available_years[] = $row['tahun'];
+    }
+}
+
 $selected_year = '';
 $selected_kinerja = ''; // Variabel baru untuk menyimpan kinerja yang dipilih
 
 // Check if a year is selected from the dropdown
 if (isset($_GET['tahun']) && $_GET['tahun'] != '') {
     $selected_year = $_GET['tahun'];
+} elseif (!empty($available_years)) {
+    $selected_year = $available_years[0];
 }
 
 // Check if a performance type is selected from the dropdown
@@ -120,16 +132,6 @@ if (!empty($bind_params)) {
 // Execute the statement
 $stmt->execute();
 $result = $stmt->get_result();
-
-// --- Get unique years for the dropdown ---
-$years_query = "SELECT DISTINCT tahun_lkpd AS tahun FROM lkpd_apbd_lampiran_1 ORDER BY tahun_lkpd DESC";
-$years_result = $conn->query($years_query);
-$available_years = [];
-if ($years_result->num_rows > 0) {
-    while ($row = $years_result->fetch_assoc()) {
-        $available_years[] = $row['tahun'];
-    }
-}
 ?>
 
 <h2 style="text-align: center;">KINERJA KEUANGAN PROVINSI RIAU</h2>
@@ -184,7 +186,7 @@ if ($result->num_rows > 0):
             <tr>
                 <th style="text-align: center;">Tahun</th>
                 <th style="text-align: center;">Kinerja</th>
-                <th style="text-align: center;">Target</th> 
+                <th style="text-align: center;">Target</th>
                 <th style="text-align: center;">Realisasi</th>
             </tr>
         </thead>

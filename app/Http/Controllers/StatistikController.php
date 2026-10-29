@@ -198,42 +198,84 @@ class StatistikController extends Controller
 
     public function kinerjaKeuangan(Request $request)
     {
+        $years = DB::table('lkpd_apbd_lampiran_1')->distinct()->orderBy('tahun_lkpd', 'desc')->pluck('tahun_lkpd');
+
         $selected_year = $request->get('tahun', '');
+        if ($selected_year === '' && $years->isNotEmpty()) {
+            $selected_year = $years->first();
+        }
         $selected_kinerja = $request->get('kinerja', '');
 
+        $available_kinerja = [
+            'Derajat Desentralisasi',
+            'Ketergantungan Keuangan',
+            'Kemandirian Keuangan',
+            'Efektifitas PAD'
+        ];
+
         $sql = "
-        SELECT tahun_lkpd AS tahun, kode AS kinerja, anggaran, realisasi
+        SELECT a.tahun_lkpd AS tahun, a.kode AS kinerja, a.anggaran AS anggaran, a.realisasi AS realisasi
         FROM (
             SELECT tahun_lkpd, LEFT(kode_catatan,2) AS kode, SUM(jumlah_anggaran) AS anggaran, SUM(jumlah_realisasi) AS realisasi
-            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, LEFT(kode_catatan,2)
+                FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, LEFT(kode_catatan,2)
             UNION ALL
             SELECT tahun_lkpd, LEFT(kode_catatan,4) AS kode, SUM(jumlah_anggaran) AS anggaran, SUM(jumlah_realisasi) AS realisasi
-            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, LEFT(kode_catatan,4)
+                FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, LEFT(kode_catatan,4)
             UNION ALL
             SELECT tahun_lkpd, kode_catatan AS kode, SUM(jumlah_anggaran) AS anggaran, SUM(jumlah_realisasi) AS realisasi
-            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, kode_catatan
-        ) t
-        WHERE kode IN ('Derajat Desentralisasi', 'Ketergantungan Keuangan', 'Kemandirian Keuangan', 'Efektifitas PAD')
+                FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd, kode_catatan
+            UNION ALL
+            SELECT tahun_lkpd, 'Derajat Desentralisasi' AS kode,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_anggaran ELSE 0 END)/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,2)= '1.') THEN la.jumlah_anggaran ELSE 0 END),0))*100 AS anggaran,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_realisasi ELSE 0 END)/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,2)= '1.') THEN la.jumlah_realisasi ELSE 0 END),0))*100 AS realisasi
+            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd
+            UNION ALL
+            SELECT tahun_lkpd, 'Ketergantungan Keuangan' AS kode,
+            ((SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.2.') THEN la.jumlah_anggaran ELSE 0 END)+SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.3.') THEN la.jumlah_anggaran ELSE 0 END))/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,2)= '1.') THEN la.jumlah_anggaran ELSE 0 END),0))*100 AS anggaran,
+            ((SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.2.') THEN la.jumlah_realisasi ELSE 0 END)+SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.3.') THEN la.jumlah_realisasi ELSE 0 END))/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,2)= '1.') THEN la.jumlah_realisasi ELSE 0 END),0))*100 AS realisasi
+            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd
+            UNION ALL
+            SELECT tahun_lkpd, 'Kemandirian Keuangan' AS kode,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_anggaran ELSE 0 END)/NULLIF((SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.2.') THEN la.jumlah_anggaran ELSE 0 END)+SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.3.') THEN la.jumlah_anggaran ELSE 0 END)),0))*100 AS anggaran,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_realisasi ELSE 0 END)/NULLIF((SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.2.') THEN la.jumlah_realisasi ELSE 0 END)+SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.3.') THEN la.jumlah_realisasi ELSE 0 END)),0))*100 AS realisasi
+            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd
+            UNION ALL
+            SELECT tahun_lkpd, 'Efektifitas PAD' AS kode,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_realisasi ELSE 0 END)/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_anggaran ELSE 0 END),0))*100 AS anggaran,
+            (SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_realisasi ELSE 0 END)/NULLIF(SUM(CASE WHEN (LEFT(kc.kode_catatan,4)= '1.1.') THEN la.jumlah_anggaran ELSE 0 END),0))*100 AS realisasi
+            FROM lkpd_apbd_lampiran_1 la INNER JOIN kode_catatan kc ON la.id_kode_catatan=kc.id GROUP BY tahun_lkpd
+        ) AS a
+        LEFT JOIN kode_catatan AS kc ON a.kode = kc.kode_catatan
+        WHERE 1=1
         ";
 
         $bindings = [];
+        if ($selected_kinerja !== '') {
+            $sql .= " AND a.kode = ?";
+            $bindings[] = $selected_kinerja;
+        } else {
+            $placeholders = implode(',', array_fill(0, count($available_kinerja), '?'));
+            $sql .= " AND a.kode IN ($placeholders)";
+            foreach ($available_kinerja as $k) {
+                $bindings[] = $k;
+            }
+        }
+
         if ($selected_year !== '') {
-            $sql .= " AND tahun_lkpd = ?";
+            $sql .= " AND a.tahun_lkpd = ?";
             $bindings[] = $selected_year;
         }
-        if ($selected_kinerja !== '') {
-            $sql .= " AND kode = ?";
-            $bindings[] = $selected_kinerja;
-        }
-        $sql .= " ORDER BY tahun_lkpd DESC";
+
+        $sql .= " ORDER BY a.tahun_lkpd DESC, a.kode ASC";
 
         $result = DB::select($sql, $bindings);
         $years = DB::table('lkpd_apbd_lampiran_1')->distinct()->orderBy('tahun_lkpd', 'desc')->pluck('tahun_lkpd');
 
         return view('kinerja_keuangan', [
-            'pageTitle' => 'Kinerja Keuangan - Manajemen Statistik Riau',
+            'pageTitle' => 'KINERJA KEUANGAN PROVINSI RIAU',
             'result' => $result,
             'available_years' => $years,
+            'available_kinerja' => $available_kinerja,
             'selected_year' => $selected_year,
             'selected_kinerja' => $selected_kinerja
         ]);
