@@ -95,8 +95,7 @@ if ($selected_kinerja != '') {
 
 // Add WHERE clause if a year is selected
 if ($selected_year != '') {
-    // Gunakan HAVING karena 'tahun' adalah alias dari kolom agregat
-    $sql .= " HAVING tahun = ?";
+    $sql .= " AND a.tahun_lkpd = ?";
 }
 
 $sql .= " ORDER BY a.tahun_lkpd, a.kode ASC";
@@ -119,8 +118,8 @@ if ($selected_kinerja != '') {
 }
 
 if ($selected_year != '') {
-    $bind_types .= "s";
-    $bind_params[] = $selected_year;
+    $bind_types .= "i";
+    $bind_params[] = (int)$selected_year;
 }
 
 // Hanya panggil bind_param jika ada parameter untuk di-bind

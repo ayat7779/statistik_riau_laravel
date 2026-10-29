@@ -263,7 +263,7 @@ class StatistikController extends Controller
 
         if ($selected_year !== '') {
             $sql .= " AND a.tahun_lkpd = ?";
-            $bindings[] = $selected_year;
+            $bindings[] = (int) $selected_year;
         }
 
         $sql .= " ORDER BY a.tahun_lkpd DESC, a.kode ASC";
