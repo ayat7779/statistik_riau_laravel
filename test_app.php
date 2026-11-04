@@ -3,7 +3,7 @@ require __DIR__ . '/vendor/autoload.php';
 $app = require_once __DIR__ . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
-$urls = ['/', '/lkpd-apbd', '/kinerja-keuangan', '/input-apbd', '/input-lkpd'];
+$urls = ['/', '/lkpd-apbd', '/kinerja-keuangan', '/kinerja-keuangan-detail', '/input-apbd', '/input-lkpd'];
 
 foreach ($urls as $url) {
     $request = Illuminate\Http\Request::create($url, 'GET');

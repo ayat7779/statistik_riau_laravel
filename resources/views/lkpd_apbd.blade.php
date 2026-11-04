@@ -41,10 +41,10 @@
                     <tr>
                         <td>{!! $tagOpen . $row->kode . $tagClose !!}</td>
                         <td>{!! $tagOpen . $row->uraian . $tagClose !!}</td>
-                        <td style="text-align:right">{!! $tagOpen . number_format($row->anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
-                        <td style="text-align:right">{!! $tagOpen . number_format($row->realisasi ?? 0, 2, ',', '.') . $tagClose !!}</td>
-                        <td style="text-align:right">{!! $tagOpen . number_format($row->persentase ?? 0, 2, ',', '.') . '%' . $tagClose !!}</td>
-                        <td style="text-align:right">{!! $tagOpen . number_format($row->sisa_anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                        <td style="text-align:right; {{ (float)($row->anggaran ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                        <td style="text-align:right; {{ (float)($row->realisasi ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->realisasi ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                        <td style="text-align:right; {{ (float)($row->persentase ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->persentase ?? 0, 2, ',', '.') . '%' . $tagClose !!}</td>
+                        <td style="text-align:right; {{ (float)($row->sisa_anggaran ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->sisa_anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
                         <td style="text-align:left">{!! $tagOpen . ($row->nama_level ?? '') . $tagClose !!}</td>
                     </tr>
                 @endforeach

@@ -45,8 +45,8 @@
                     <td style="text-align: center;"><strong>{{ $row->tahun_lkpd }}</strong></td>
                     <td>{{ $row->kodeCatatan->kode_catatan ?? '-' }}</td>
                     <td>{{ $row->kodeCatatan->uraian ?? '-' }}</td>
-                    <td style="text-align:right">{{ number_format($row->jumlah_anggaran ?? 0, 2, ',', '.') }}</td>
-                    <td style="text-align:right">{{ number_format($row->jumlah_realisasi ?? 0, 2, ',', '.') }}</td>
+                    <td style="text-align:right; {{ (float)($row->jumlah_anggaran ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{{ number_format($row->jumlah_anggaran ?? 0, 2, ',', '.') }}</td>
+                    <td style="text-align:right; {{ (float)($row->jumlah_realisasi ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{{ number_format($row->jumlah_realisasi ?? 0, 2, ',', '.') }}</td>
                     <td style="text-align: center;">
                         <a href="{{ route('input-lkpd.edit', $row->id) }}" style="color: #2563eb; margin-right: 10px; text-decoration: none;"><i class="fas fa-edit"></i> Edit</a>
                         <form action="{{ route('input-lkpd.destroy', $row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">

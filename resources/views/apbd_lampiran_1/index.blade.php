@@ -47,10 +47,10 @@
                 <tr>
                     <td>{!! $tagOpen . $row->kode . $tagClose !!}</td>
                     <td>{!! $tagOpen . $row->uraian . $tagClose !!}</td>
-                    <td style="text-align:right">{!! $tagOpen . number_format($row->anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
-                    <td style="text-align:right">{!! $tagOpen . number_format($row->perubahan ?? 0, 2, ',', '.') . $tagClose !!}</td>
-                    <td style="text-align:right">{!! $tagOpen . number_format($row->bertambah_berkurang ?? 0, 2, ',', '.') . $tagClose !!}</td>
-                    <td style="text-align:right">{!! $tagOpen . number_format($row->persentase ?? 0, 2, ',', '.') . '%' . $tagClose !!}</td>
+                    <td style="text-align:right; {{ (float)($row->anggaran ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->anggaran ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                    <td style="text-align:right; {{ (float)($row->perubahan ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->perubahan ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                    <td style="text-align:right; {{ (float)($row->bertambah_berkurang ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->bertambah_berkurang ?? 0, 2, ',', '.') . $tagClose !!}</td>
+                    <td style="text-align:right; {{ (float)($row->persentase ?? 0) < 0 ? 'color: #dc2626;' : '' }}">{!! $tagOpen . number_format($row->persentase ?? 0, 2, ',', '.') . '%' . $tagClose !!}</td>
                     <td style="text-align:left">{!! $tagOpen . ($row->nama_level ?? '') . $tagClose !!}</td>
                     <td style="text-align:center">{!! $tagOpen . ($row->jenis_apbd ?? '') . $tagClose !!}</td>
                 </tr>

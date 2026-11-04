@@ -21,9 +21,6 @@
                     <div class="menu-section">
                             <h3><i class="fas fa-database"></i> Data Utama</h3>
                             <ul>
-                                    <li><a href="index.php?page=apbd"><i class="fas fa-chart-bar"></i> Data APBD</a></li>
-                                    <li><a href="index.php?page=lkpd_apbd"><i class="fas fa-chart-line"></i> Data LKPD APBD</a></li>
-                                    <li><a href="index.php?page=kinerja_keuangan"><i class="fas fa-chart-line"></i> KINERJA KEUANGAN</a></li>
                                     <li><a href="index.php?page=kinerja_keuangan_detail"><i class="fas fa-chart-line"></i> DETAIL KINERJA KEUANGAN</a></li>
                             </ul>
                     </div>
