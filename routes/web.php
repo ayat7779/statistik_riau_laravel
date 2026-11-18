@@ -10,6 +10,7 @@ use App\Http\Controllers\KodeLevelController;
 use App\Http\Controllers\ApbdLampiran1Controller;
 use App\Http\Controllers\ApbdInputController;
 use App\Http\Controllers\LkpdInputController;
+use App\Http\Controllers\AkunAsetController;
 
 Route::get('/', [StatistikController::class, 'apbd']);
 Route::get('/lkpd-apbd', [StatistikController::class, 'lkpdApbd'])->name('lkpd-apbd');
@@ -24,3 +25,4 @@ Route::resource('level-kode', KodeLevelController::class);
 Route::get('apbd-lampiran-1', [ApbdLampiran1Controller::class, 'index'])->name('apbd-lampiran-1.index');
 Route::resource('input-apbd', ApbdInputController::class);
 Route::resource('input-lkpd', LkpdInputController::class);
+Route::resource('akun-aset', AkunAsetController::class);

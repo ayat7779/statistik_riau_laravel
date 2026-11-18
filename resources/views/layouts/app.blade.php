@@ -520,6 +520,11 @@
                         <i class="fas fa-file-signature"></i> Input Data LKPD
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('akun-aset.index') }}" class="{{ request()->routeIs('akun-aset.*') ? 'active' : '' }}">
+                        <i class="fas fa-boxes-stacked"></i> Input Data Akun Aset
+                    </a>
+                </li>
             </ul>
 
             <!-- Lampiran Dokumen -->
